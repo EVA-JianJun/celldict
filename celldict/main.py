@@ -121,7 +121,7 @@ class CellDict():
 
         return data_dict
 
-    def set(self, key, value):
+    def set(self, key, value, version_record="Default"):
         """
         文档:
             存储数据
@@ -131,6 +131,10 @@ class CellDict():
                 名称
             value : all type
                 数据
+            version_record : int or None or "Default" (default: "Default")
+                版本记录
+                每次修改会保留上次记录, version_record设置保存的记录数量, 设置为None保留全部记录(根据数据大小会占用硬盘)
+                默认为 "Default" 会使用系统 self.version_record
         """
         value_path = os.path.join(self.cell_path, key)
         if not os.path.isdir(value_path):
@@ -149,9 +153,11 @@ class CellDict():
             raise(ValueError("保存数据失败!"))
 
         # 清理过时文件
-        if self.version_record:
+        if version_record == "Default":
+            version_record = self.version_record
+        if version_record:
             value_file_path_list = sorted(os.listdir(value_path), reverse=True)
-            need_del_file_name_list = value_file_path_list[self.version_record:]
+            need_del_file_name_list = value_file_path_list[version_record:]
             for need_del_file_name in need_del_file_name_list:
                 need_del_file_path = os.path.join(value_path, need_del_file_name)
                 os.remove(need_del_file_path)
