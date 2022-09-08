@@ -7,7 +7,7 @@ from datetime import datetime
 
 class CellDict():
     """ 文件型字典 """
-    def __init__(self, name, version_record=3):
+    def __init__(self, name, version_record=3, root_path=".CellDict"):
         """
         文档:
             初始化
@@ -18,12 +18,14 @@ class CellDict():
             version_record : int or None (default: 3)
                 版本记录
                 每次修改会保留上次记录, version_record设置保存的记录数量, 设置为None保留全部记录(根据数据大小会占用硬盘)
+            root_path : str (default: ".CellDict)
+                设置数据根目录
         """
 
         self.name = name
         self.version_record = version_record
 
-        self.cell_path = os.path.join(".CellDict", self.name)
+        self.cell_path = os.path.join(root_path, self.name)
 
         # 初始化
         self._init_path()
@@ -161,3 +163,13 @@ class CellDict():
             for need_del_file_name in need_del_file_name_list:
                 need_del_file_path = os.path.join(value_path, need_del_file_name)
                 os.remove(need_del_file_path)
+
+    def keys(self, reverse=False):
+        """
+        文档:
+            返回键值列表
+        参数:
+            reverse : bool (default: False)
+                排序方向
+        """
+        return sorted(os.listdir(self.cell_path), reverse=reverse)
