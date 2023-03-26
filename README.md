@@ -1,8 +1,8 @@
 # CellDict
 
-**Python 文件型配置! 细胞字典, 简单高效安全的保存读取程序变量!**
+**Python 基于 `Pickle` 的高效变量保存读取!**
 
-方便高效的把程序数据变量保存为文件, 高效快速的读取, 且可以进行版本控制.
+简洁快速的保存和读取变量, 方便的版本控制.
 
 ## 安装
 
@@ -10,49 +10,49 @@
 
 ## 简介
 
-`CellDict` 主要用于保存程序中的一些变量, 或者一些配置, 程序下次重启的时候可以快速的读取这些变量, 实现的方式很简单, 就直接 `pickle` 保存读取, 有个类似的包 `shelve` 也有这个功能, 但是 `shelve` 在持续不断的写入数据的时候有概率会造成数据丢失,所以才有了 `CellDict` 这个包, 因为实现的很简单, 所以很安全, 且我为 `CellDict` 加了版本控制的功能, 一些重要的变量可以用版本控制保存过时的信息.
+`CellDict` 用于快速保存 Python 变量到文件, `shelve` 包也有类似的功能, 但是 `shelve` 在持续不断的写入数据的时候有概率造成数据丢失, 而 `CellDict` 根据文件夹区分 `Key`, 所以更加安全, 且支持版本控制.
 
-## 例子
+## 使用
 ```
-    from celldict import CellDict
+from celldict import CellDict
 
-    # 数据集名称为 "name", 修改记录保存三次
-    cell = CellDict("name", version_record=3)
+# 数据集名称为 "dataname", 修改记录保存三次
+cell = CellDict("dataname", version_record=3, root_path=".CellDict")
 
-    cell.set("data1", 1)
-    cell.set("data2", "Hello CellDict!")
+# 保存数据
+cell.set("data1", 1)
+cell.set("data2", "Hello CellDict!")
 
-    # out 1
-    cell.get("data1")
-    # out "Hello CellDict!"
-    cell.get("data2")
+# 读取数据
+cell.get("data1")
+cell.get("data2")
 
-    # version参数控制获取数据的版本
-    def get(self, key, version="last"):
-        """
-        文档:
-            获取数据
+# 记录多次并读取需要版本的数据
+cell.set("data1", 2)
+cell.set("data1", 3)
+# 只记录 3 次, 第一次记录的 1 会被丢弃
+cell.set("data1", 4)
 
-        参数:
-            key : str
-                数据名称
-            version : str or int  (default: "last")
-                序号获取的版本, 默认获取最新的
-                    str:
-                        "last"     : 最新记录
-                        "former"   : 最旧记录
-                    int:
-                        0   :   最新记录
-                        1   :   次新记录
-                        2   :   第三新记录
-                        ..
-                        n   :   第n-1新记录
+# 最新记录 4
+cell.get("data1", "last")
+# 最旧记录 2
+cell.get("data1", "former")
 
-                        -1  :   最旧记录
-                        -2  :   次旧记录
-                        ..
-                        -n  :   第n旧记录
-        返回:
-            返回数据
-        """
+# 按索引读取
+cell.get("data1", 0) # 4
+cell.get("data1", 1) # 3
+cell.get("data1", 2) # 2
+
+cell.get("data1", -1) # 2
+cell.get("data1", -2) # 3
+cell.get("data1", -3) # 4
+
+# 读取所有版本数据
+cell.getall("data1")
+
+# 获取数据所有 keys
+cell.keys() # ['data1', 'data2']
+
+# 删除数据 out True or False
+cell.delkey("data2")
 ```

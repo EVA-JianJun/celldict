@@ -2,6 +2,7 @@
 import os
 import uuid
 import pickle
+import shutil
 import traceback
 from datetime import datetime
 
@@ -30,11 +31,13 @@ class CellDict():
         # 初始化
         self._init_path()
 
+    """ 系统函数 """
     def _init_path(self):
         """ 初始化路径 """
         if not os.path.isdir(self.cell_path):
             os.makedirs(self.cell_path)
 
+    """ 用户函数 """
     def get(self, key, version="last"):
         """
         文档:
@@ -64,7 +67,7 @@ class CellDict():
         """
         value_path = os.path.join(self.cell_path, key)
         if not os.path.isdir(value_path):
-            raise FileNotFoundError("记录路径不存在!")
+            raise KeyError("{0} not found!".format(key))
 
         if version == "last":
             version = 0
@@ -91,7 +94,7 @@ class CellDict():
 
         return value
 
-    def get_all(self, key):
+    def getall(self, key):
         """
         文档:
             获取key下所有数据
@@ -173,3 +176,12 @@ class CellDict():
                 排序方向
         """
         return sorted(os.listdir(self.cell_path), reverse=reverse)
+
+    def delkey(self, key):
+        value_path = os.path.join(self.cell_path, key)
+        try:
+            shutil.rmtree(value_path)
+        except FileNotFoundError:
+            return False
+        else:
+            return True
