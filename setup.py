@@ -7,11 +7,11 @@ with open("README.md", "r", encoding="utf-8") as fd:
 
 setup(
     name = 'celldict',
-    version = '1.2.0',
+    version = '2.0.0',
     author = 'jianjun',
     author_email = '910667956@qq.com',
     url = 'https://github.com/EVA-JianJun/celldict',
-    description = u'Python 文件型配置! 细胞字典, 简单高效安全的保存读取程序变量!',
+    description = u'Python 简洁快速的保存和读取变量, 方便的版本控制!',
     long_description = long_description,
     long_description_content_type = "text/markdown",
     packages = ["celldict"],
